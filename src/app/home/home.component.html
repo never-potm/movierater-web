@@ -1,0 +1,59 @@
+<p>
+  Welcome {{ account.username }}
+</p>
+
+<button mat-ripple mat-raised-button (click)="onLogout()" color="accent">Logout</button>
+<br>
+
+<div class="container">
+  <h4>Movies</h4>
+  <div *ngFor="let movie of movies" (click)="movieClicked(movie)" class="movieClickable">
+    <h4>{{movie.title}}</h4>    
+  </div>
+  <button mat-ripple mat-raised-button (click)="addMovieClicked()" color="accent">Add Movie</button>
+  <br>
+</div>
+
+<div class="container">
+    <div *ngIf="selectedMovie && !isAddEditMode">
+      <h2>Details</h2>
+      <h4>{{ selectedMovie.title }}</h4>
+      <p>{{ selectedMovie.description }}</p>
+      <ngb-rating [rate]="selectedMovie.avg_rating" (hover)="hovered=$event" (leave)="hovered=0"
+      max="5" [readonly]="true"></ngb-rating> ({{ selectedMovie.number_of_ratings }}) <br>
+      <button mat-ripple mat-raised-button (click)="editMovieClicked()" color="accent">Edit Movie</button>
+      <button mat-ripple mat-raised-button (click)="deleteMovieClicked()" color="warn">Delete Movie</button>
+
+      <h3>Rate movie</h3>
+      <ngb-rating [rate]="my_rating" (hover)="hovered=$event" max="5" (rateChange)="newRate($event)"></ngb-rating>
+    </div>
+    <div *ngIf="isAddEditMode">
+      <h2>
+        <span *ngIf="isEdit">Edit</span>
+        <span *ngIf="!isEdit">New</span>
+        Movie
+      </h2>
+      <form (ngSubmit)="submitMovie()" [formGroup]="addMovieInput">
+        <div class="form-group">
+          <mat-form-field class="example-full-width">
+            <input matInput placeholder="Title" formControlName="title">
+            <mat-error *ngIf="addMovieInput.get('title').hasError('required')">
+              Movie title is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+          <br>
+          <mat-form-field class="example-full-width">
+            <textarea matInput placeholder="Description" formControlName="description"></textarea>
+            <mat-error *ngIf="addMovieInput.get('description').hasError('required')">
+              Description is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </div>
+        
+        <button mat-ripple mat-raised-button type="submit" [disabled]="addMovieInput.invalid || loading" 
+          color="primary">Save</button>
+        <br>
+        <mat-spinner *ngIf="loading"></mat-spinner>
+      </form>
+    </div>
+</div>
